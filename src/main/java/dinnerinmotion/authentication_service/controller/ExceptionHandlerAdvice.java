@@ -3,6 +3,7 @@ package dinnerinmotion.authentication_service.controller;
 import dinnerinmotion.authentication_service.exceptions.CouldNotCreateTokenException;
 import dinnerinmotion.authentication_service.exceptions.EmailDoesNotExistException;
 import dinnerinmotion.authentication_service.exceptions.NotAuthenticatedException;
+import dinnerinmotion.authentication_service.exceptions.TokenIsEmptyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -31,5 +32,9 @@ public class ExceptionHandlerAdvice {
         return new ResponseEntity<>("Email does not exist", HttpStatus.NOT_FOUND);
     }
 
-
+    @ExceptionHandler
+    public ResponseEntity<String> handleTokenIsEmptyException(TokenIsEmptyException e) {
+        log.error("Token is empty", e);
+        return new ResponseEntity<>("Token is empty", HttpStatus.CONFLICT);
+    }
 }

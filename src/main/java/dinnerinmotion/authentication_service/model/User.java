@@ -16,9 +16,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     UUID userId;
 
-    @Column
+    @Column(unique = true, nullable = false)
     String email;
 
-    @Column
+    @Column(nullable = false)
     String password;
+
+    @Column(nullable = false)
+    Role role;
 }

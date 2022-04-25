@@ -5,21 +5,22 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import dinnerinmotion.authentication_service.model.User;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 
-@Service
+@Service @RequiredArgsConstructor
 public class JwtService
 {
-    @Value("${jwtSecret}")
-    private String jwtSecret;
+    private final String SECRET_KEY = "secret";
+    private final String tokenPrefix = "Bearer ";
+    private final String headerString = "Authorization";
 
     public String createToken(User user) throws UnsupportedEncodingException {
-        Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
+        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
         return JWT.create()
                 .withIssuer("AuthenticationService")
                 .withClaim("userId", user.getUserId().toString())
@@ -27,14 +28,12 @@ public class JwtService
                 .sign(algorithm);
     }
 
-
     public String verifyToken(String token) throws UnsupportedEncodingException {
-        Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
+        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
         JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer("AuthenticationService")
                 .build();
         DecodedJWT jwt = verifier.verify(token);
-
         return jwt.getClaim("userId").asString();
     }
 }

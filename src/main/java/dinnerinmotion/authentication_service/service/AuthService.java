@@ -3,16 +3,15 @@ package dinnerinmotion.authentication_service.service;
 import dinnerinmotion.authentication_service.exceptions.CouldNotCreateTokenException;
 import dinnerinmotion.authentication_service.exceptions.EmailDoesNotExistException;
 import dinnerinmotion.authentication_service.exceptions.NotAuthenticatedException;
+import dinnerinmotion.authentication_service.exceptions.TokenIsEmptyException;
 import dinnerinmotion.authentication_service.model.Login;
 import dinnerinmotion.authentication_service.model.User;
 import dinnerinmotion.authentication_service.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
-@Service @RequiredArgsConstructor
+@Service @AllArgsConstructor
 public class AuthService {
 
     private final JwtService jwtService;
@@ -37,11 +36,14 @@ public class AuthService {
         String token;
         try {
             token = jwtService.createToken(user);
+            if(token.isEmpty()){
+                throw new TokenIsEmptyException();
+            }
+            return token;
         }
         catch(Exception e){
             throw new CouldNotCreateTokenException();
         }
-        return token;
     }
 
     public String EncodePassword(String password){
@@ -56,7 +58,7 @@ public class AuthService {
     }
 
     //TODO: SignUp & Encoding password
-//    public User signUp(Login login){
+//    public User signUp(Login login) {
 //       return User;
 //    }
 }
